@@ -1,0 +1,40 @@
+{% load static %}
+<div style="position: sticky;">
+     <nav>
+          <div>
+               <a href="{% url 'aboutme:about_me' %}"><button class="menu">
+                         <img src="{% static 'aboutme/images/me.png' %}"
+                              style="width:29px;height:auto;margin-right:5px;"> About me
+                    </button></a>
+          </div>
+          <div>
+               <a href="{% url 'aboutme:education' %}"><button class="menu">
+                         <img src="{% static 'aboutme/images/edu.png' %}"
+                              style="width:28px;height:auto;margin-right:5px;"> Education
+                    </button></a>
+          </div>
+          <div>
+               <a href="{% url 'aboutme:experience' %}"><button class="menu">
+                         <img src="{% static 'aboutme/images/work.png' %}"
+                              style="width:27px;height:auto;margin-right:5px;"> Experience
+                    </button></a>
+          </div>
+          <div>
+               <a href="{% url 'aboutme:skills' %}"><button class="menu">
+                         <img src="{% static 'aboutme/images/skills.png' %}"
+                              style="width:27px;height:auto;margin-right:5px;"> Skills
+                    </button></a>
+          </div>
+          <div>
+               <a href="{% url 'calendar_current' %}"><button class="menu">
+                         <img src="{% static 'aboutme/images/blog.png' %}"
+                              style="width:26px;height:auto;margin-right:5px;"> Blog
+                    </button></a>
+          </div>
+          <div>
+               <a href="{% url 'aboutme:contact' %}"><button class="menu">
+                         <img src="{% static 'aboutme/images/contact.png' %}"
+                              style="width:28px;height:auto;margin-right:5px;"> Contact
+                    </button></a>
+          </div>
+     </nav>

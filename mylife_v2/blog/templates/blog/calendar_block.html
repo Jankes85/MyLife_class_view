@@ -1,0 +1,51 @@
+{% load static %}
+
+
+
+<a href="{% url 'calendar_current' %}{{ prev }}">
+    <button class="next" style="display:inline-block;">Previous Month</button></a>
+<a href="{% url 'calendar_current' %}{{ next }}">
+    <button class="next" style="float:right;">Next Month</button></a>
+<div class="cal">
+    {{ cal|safe}}
+    <br>
+    <h2>Blog post list</h2>
+    <table id="data">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Note</th>
+                <th>Entry date</th>
+                <th>Categories</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for post in blog %}
+            <tr>
+                <td><a href="{% url 'post_detail' post.id %}">{{ post.title }}</td>
+                <td>{{ post.note }}</td>
+                <td>{{ post.entry_date }} </a> </td>
+                <td>{{ post.category }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+    <br>
+    <a href="{% url 'post_create' %}">
+        <button class="next" style="display:inline-block;">Add post</button></a>
+    <a href="{% url 'post_search' %}">
+        <button class="next" style="display:inline-block;">Search post</button></a>
+    <br>
+    <br>
+    BLOG
+    {{ blog }}
+    <br>
+    <br>
+    BLOG_L
+    {{ blog_l }}
+    <br>
+    <br>
+    BLOG_DICT
+    {{ date_blog_dict }}
+    <a href="{% static 'aboutme/files/cv.pdf' %}"><button class="button">CV</button></a>

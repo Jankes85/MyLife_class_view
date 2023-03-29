@@ -1,0 +1,11 @@
+{% extends "aboutme/base.html" %}
+{% load static %}
+
+
+{% block main_content %}
+<div class="container">
+    <h2>Thank you {{ first_name }} for sending the message. I will try to answer as soon as possible </h2>
+</div>
+<a href="{% static 'aboutme/files/cv.pdf' %}"><button class="button">CV</button></a>
+
+{% endblock %}

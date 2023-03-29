@@ -1,0 +1,57 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{% static 'aboutme/css/style.css' %}" rel="stylesheet" type="text/css">
+    <title> {% block head_title %} {{site_name}} {% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@500&display=swap" rel="stylesheet">
+</head>
+
+<body style="background-image: url('{% static 'aboutme/images/background.jpg' %}')" ;>
+
+    {% block sidebar %}
+    <div style="text-align: right; position: fixed; top: 30px; right: 30px;">
+        {% if user.is_authenticated %}
+        Logged: {{ user.username }}
+        <br>
+        <a href="{% url 'logout' %}">Logout</a>
+        {% else %}
+        <a href="{% url 'login' %}">Login</a> or <a href="{% url 'register' %}">Register</a>
+        {% endif %}
+    </div>
+    {% endblock %}
+
+    {% block header %}
+    <header>
+        <div class="vertical">
+            <h1 class="page_name"> {{site_name}} </h1>
+            <img id="face" src="{% static 'aboutme/images/face.png' %}">
+            {% include "aboutme/left_menu.html" %}
+        </div>
+        {% include "aboutme/header_menu.html" %}
+    </header>
+    {% endblock %}
+
+    {% block main_content %}
+    <div class="container"></div>
+
+    <a href="{% static 'aboutme/files/cv.pdf' %}"><button class="button">CV</button></a>
+
+    {% endblock %}
+</body>
+<div>
+    {% block footer %}
+    <footer>
+        Wojciech Jankowski design © 2023
+    </footer>
+    {% endblock %}
+</div>
+
+</html>

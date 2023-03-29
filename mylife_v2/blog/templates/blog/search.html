@@ -1,0 +1,49 @@
+{% extends "aboutme/base.html" %}
+{% load static %}
+
+{% block main_content %}
+<div class="container">
+
+    <h2>Criteria:</h2>
+
+    <form method="GET">
+        <table id="data" style="display: grid">
+            {{ form }}
+            <tr style="text-align: center;">
+                <td><input class="next" type="submit" value="Search" style="border-radius: 0%;
+padding: 0px">
+                </td>
+            </tr>
+        </table>
+    </form>
+    <a href="{% url 'calendar_current' %}">
+        <button class="next" style="float:right;">Cancel</button></a>
+    <br>
+    <h2>Results:</h2>
+
+    <table id="data">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Note</th>
+                <th>Entry date</th>
+                <th>Categories</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for post in blog %}
+            <tr>
+                <td><a href="{% url 'post_detail' post.id %}">{{ post.title }}</td>
+                <td>{{ post.note }}</td>
+                <td>{{ post.entry_date }} </a> </td>
+                <td>{{ post.category }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+
+</div>
+<a href="{% static 'aboutme/files/cv.pdf' %}"><button class="button">CV</button></a>
+
+{% endblock %}

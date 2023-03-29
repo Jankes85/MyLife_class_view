@@ -1,0 +1,12 @@
+{% extends "aboutme/base.html" %}
+{% load static %}
+
+
+{% block main_content %}
+<div class="container">
+  {{ blog.entry_date }}
+
+  {% include 'blog/calendar_block.html' %}
+</div>
+
+{% endblock %}

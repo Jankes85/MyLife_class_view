@@ -1,0 +1,16 @@
+{% extends "aboutme/base.html" %}
+{% load static %}
+
+{% block main_content %}
+<div class="container">
+    <h2>Czy jesteś pewien, że chcesz skasować</h2>
+    <form method="POST" novalidate>
+        {% csrf_token %}
+        <input class="next" type="submit" value="Delete" style="border-radius: 0%;">
+    </form>
+    <a href="{% url 'post_detail' post.id %}">
+        <button class="next" style="float:right;">Cancel</button></a>
+</div>
+<a href="{% static 'aboutme/files/cv.pdf' %}"><button class="button">CV</button></a>
+
+{% endblock %}

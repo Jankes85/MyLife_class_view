@@ -1,0 +1,19 @@
+{% extends "aboutme/base.html" %}
+{% load static %}
+
+
+{% block main_content %}
+<div class="container">
+    <form method="POST" novalidate>
+        <table id="data" style="display: grid">
+            {% csrf_token %}
+            {{ form }}
+            <tr style="text-align: center;">
+                <td><input class="next" type="submit" value="Send" style="border-radius: 0%;"></td>
+            </tr>
+        </table>
+    </form>
+</div>
+<a href="{% static 'aboutme/files/cv.pdf' %}"><button class="button">CV</button></a>
+
+{% endblock %}

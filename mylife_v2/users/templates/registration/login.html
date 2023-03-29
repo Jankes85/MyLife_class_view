@@ -1,0 +1,32 @@
+{% extends "aboutme/base.html" %}
+{% load static %}
+
+{% block head_title %} Login {% endblock %}
+
+{% block header %}
+<header>
+    <div class="vertical">
+        <h1 class="page_name"> Login </h1>
+        <img id="face" src="{% static 'aboutme/images/face.png' %}">
+        {% include "aboutme/left_menu.html" %}
+    </div>
+    {% include "aboutme/header_menu.html" %}
+</header>
+{% endblock %}
+
+{% block main_content %}
+<div class="container">
+    <h2> Login form </h2>
+    <form method="POST" novalidate>
+        {% csrf_token %}
+        <table id="data" style="display: grid">
+            {{ form }}
+            <tr style="text-align: center;">
+                <td><input class="next" type="submit" value="Login" style="border-radius: 0%;"></td>
+            </tr>
+        </table>
+    </form>
+</div>
+<a href="{% static 'aboutme/files/cv.pdf' %}"><button class="button">CV</button></a>
+
+{% endblock %}

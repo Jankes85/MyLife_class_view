@@ -1,0 +1,21 @@
+{% extends "aboutme/base.html" %}
+{% load static %}
+
+{% block main_content %}
+<div class="container">
+
+    <form method="POST" novalidate>
+        {% csrf_token %}
+        <table id="data" style="display: grid">
+            {{ form }}
+            <tr style="text-align: center;">
+                <td><input class="next" type="submit" value="Save"></td>
+            </tr>
+        </table>
+    </form>
+    <a href="{% url 'calendar_current' %}">
+        <button class="next" style="float:right;">Cancel</button></a>
+</div>
+<a href="{% static 'aboutme/files/cv.pdf' %}"><button class="button">CV</button></a>
+
+{% endblock %}

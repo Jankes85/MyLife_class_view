@@ -1,0 +1,22 @@
+{% extends "aboutme/base.html" %}
+{% load static %}
+
+{% block main_content %}
+<div class="container">
+    <h2> A few words about me</h2>
+    <p>I am a beginner Python programmer who wants to gain new skills and experience in the IT industry. I have
+        analytical skills and thanks to my previous experience I can work well in a team. I gain my knowledge from
+        online courses, e.g. Udemy, from industry literature, to later verify what I've learned by solving tasks on
+        Codewars.
+    </p>
+    <p>I am motivated by the possibility of personal development and the new challenges that I am looking forward to.
+    </p>
+    <p>
+        In my free time, I like to watch a good football match, or if the weather is good, jump on a bike and ride
+        ahead. But my greatest passion is baking cakes during which I can relax and of course later taste delicious
+        results
+    </p>
+</div>
+<a href="{% static 'aboutme/files/cv.pdf' %}"><button class="button">CV</button></a>
+
+{% endblock %}

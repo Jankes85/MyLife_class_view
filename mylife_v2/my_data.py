@@ -1,0 +1,1 @@
+s_key = 'django-insecure-htqj9+%prl40s*l8(!-($ko#s+46ya-u3v1jh5277#^&&(9s7_'
