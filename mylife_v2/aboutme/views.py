@@ -2,7 +2,10 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, request
+from django.urls import reverse_lazy
+from django.views.generic import TemplateView, ListView, FormView
+
 from .forms import ContactForm
 from .models import Experience, Education, Course, Book, Skill, Language
 from django.core.mail import send_mail, BadHeaderError
@@ -10,24 +13,38 @@ from django.core.mail import send_mail, BadHeaderError
 # Create your views here.
 
 
-def intro(request):
-    return render(request=request, template_name="aboutme/intro.html")
+
+class AboutMeView(TemplateView):
+    template_name = "aboutme/aboutme.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['site_name'] = "About me"
+        return context
 
 
-def about_me(request):
-    ctx = {'site_name': "About me"}
-    return render(request=request, template_name="aboutme/aboutme.html", context=ctx)
+class EducationView(ListView):
+    model = Education
+    fields = "__all__"
+    template_name = "aboutme/education.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['courses'] = Course.objects.all()
+        context['books'] = Book.objects.all()
+        context['site_name'] = "Education"
+        return context
 
 
-def education(request):
-    education = Education.objects.all()
-    courses = Course.objects.all()
-    books = Book.objects.all()
-    ctx = {"education": education,
-           "courses": courses,
-           "books": books,
-           'site_name': "Education"}
-    return render(request=request, template_name="aboutme/education.html", context=ctx)
+class ExperienceView(ListView):
+    model = Experience
+    fields = "__all__"
+    template_name = "aboutme/experience.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['site_name'] = "Experience"
+        return context
 
 
 def contact(request):
@@ -59,103 +76,115 @@ def contact(request):
     return render(request=request, template_name="aboutme/contact.html", context=ctx)
 
 
-def skills(request):
-    skills_s = Skill.objects.filter(skill_type="s")
-    skills_t = Skill.objects.filter(skill_type="t")
-    languages = Language.objects.all()
-    ctx = {"skills_s": skills_s,
-           "skills_t": skills_t,
-           "languages": languages,
-           'site_name': "Skills"}
-    return render(request=request, template_name="aboutme/skills.html", context=ctx)
+class ContactView(FormView):
+    form_class = ContactForm
+    template_name = "aboutme/contact.html"
+    success_url = reverse_lazy("aboutme:thanks")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['site_name'] = "Contact"
+        return context
 
 
-def experience(request):
-    experience = Experience.objects.all()
-    ctx = {"experience": experience,
-           'site_name': "Experience"}
-    return render(request=request, template_name="aboutme/experience.html", context=ctx)
+class SkillsView(ListView):
+    model = Language
+    fields = "__all__"
+    template_name = "aboutme/skills.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['skills_s'] = Skill.objects.filter(skill_type="s")
+        context['skills_t'] = Skill.objects.filter(skill_type="t")
+        context['site_name'] = "Skills"
+        return context
 
 
-def thanks(request):
-    ctx = {"first_name": request.session["first_name"],
-           'site_name': "Contact", }
-    return render(request=request, template_name="aboutme/thanks.html", context=ctx)
+class ThanksView(TemplateView):
+    template_name = "aboutme/thanks.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['first_name'] = self.request.session['first_name']
+        context['site_name'] = "Thank you"
+        return context
 
 
-def python(request):
-    education = Education.objects.filter(competences__icontains="python")
-    courses = Course.objects.filter(competences__icontains="python")
-    books = Book.objects.filter(competences__icontains="python")
-    ctx = {"education": education,
-           "courses": courses,
-           "books": books,
-           "skill": "Python",
-           'site_name': "Python",
-           }
-    return render(request=request, template_name="aboutme/from_where_skills.html", context=ctx)
+
+class PythonView(ListView):
+    template_name = "aboutme/from_where_skills.html"
+    queryset = Education.objects.filter(competences__icontains="python")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['courses'] = Course.objects.filter(competences__icontains="python")
+        context['books'] = Book.objects.filter(competences__icontains="python")
+        context['site_name'] = "Python"
+        context['skill'] = "Python"
+        return context
 
 
-def sql(request):
-    education = Education.objects.filter(competences__icontains="sql")
-    courses = Course.objects.filter(competences__icontains="sql")
-    books = Book.objects.filter(competences__icontains="sql")
-    ctx = {"education": education,
-           "courses": courses,
-           "books": books,
-           "skill": "SQL",
-           'site_name': "SQL",
-           }
-    return render(request=request, template_name="aboutme/from_where_skills.html", context=ctx)
+class SqlView(ListView):
+    template_name = "aboutme/from_where_skills.html"
+    queryset = Education.objects.filter(competences__icontains="sql")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['courses'] = Course.objects.filter(competences__icontains="sql")
+        context['books'] = Book.objects.filter(competences__icontains="sql")
+        context['site_name'] = "SQL"
+        context['skill'] = "SQL"
+        return context
 
 
-def django(request):
-    education = Education.objects.filter(competences__icontains="django")
-    courses = Course.objects.filter(competences__icontains="django")
-    books = Book.objects.filter(competences__icontains="django")
-    ctx = {"education": education,
-           "courses": courses,
-           "books": books,
-           "skill": "Django",
-           'site_name': "Django",
-           }
-    return render(request=request, template_name="aboutme/from_where_skills.html", context=ctx)
+class DjangoView(ListView):
+    template_name = "aboutme/from_where_skills.html"
+    queryset = Education.objects.filter(competences__icontains="django")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['courses'] = Course.objects.filter(competences__icontains="django")
+        context['books'] = Book.objects.filter(competences__icontains="django")
+        context['site_name'] = "Django"
+        context['skill'] = "Django"
+        return context
 
 
-def html(request):
-    education = Education.objects.filter(competences__icontains="html")
-    courses = Course.objects.filter(competences__icontains="html")
-    books = Book.objects.filter(competences__icontains="html")
-    ctx = {"education": education,
-           "courses": courses,
-           "books": books,
-           "skill": "HTML",
-           'site_name': "HTML",
-           }
-    return render(request=request, template_name="aboutme/from_where_skills.html", context=ctx)
+class HtmlView(ListView):
+    template_name = "aboutme/from_where_skills.html"
+    queryset = Education.objects.filter(competences__icontains="html")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['courses'] = Course.objects.filter(competences__icontains="html")
+        context['books'] = Book.objects.filter(competences__icontains="html")
+        context['site_name'] = "HTML"
+        context['skill'] = "HTML"
+        return context
 
 
-def css(request):
-    education = Education.objects.filter(competences__icontains="css")
-    courses = Course.objects.filter(competences__icontains="css")
-    books = Book.objects.filter(competences__icontains="css")
-    ctx = {"education": education,
-           "courses": courses,
-           "books": books,
-           "skill": "CSS",
-           'site_name': "CSS",
-           }
-    return render(request=request, template_name="aboutme/from_where_skills.html", context=ctx)
+class CssView(ListView):
+    template_name = "aboutme/from_where_skills.html"
+    queryset = Education.objects.filter(competences__icontains="css")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['courses'] = Course.objects.filter(competences__icontains="css")
+        context['books'] = Book.objects.filter(competences__icontains="css")
+        context['site_name'] = "CSS"
+        context['skill'] = "CSS"
+        return context
 
 
-def js(request):
-    education = Education.objects.filter(competences__icontains="javascript")
-    courses = Course.objects.filter(competences__icontains="javascript")
-    books = Book.objects.filter(competences__icontains="javascript")
-    ctx = {"education": education,
-           "courses": courses,
-           "books": books,
-           "skill": "JavaScript",
-           'site_name': "JavaScript",
-           }
-    return render(request=request, template_name="aboutme/from_where_skills.html", context=ctx)
+class JsView(ListView):
+    template_name = "aboutme/from_where_skills.html"
+    queryset = Education.objects.filter(competences__icontains="javascript")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['courses'] = Course.objects.filter(competences__icontains="javascript")
+        context['books'] = Book.objects.filter(competences__icontains="javascript")
+        context['site_name'] = "JavaScript"
+        context['skill'] = "JavaScript"
+        return context
+
