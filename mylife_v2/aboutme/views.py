@@ -77,9 +77,21 @@ def contact(request):
 
 
 class ContactView(FormView):
-    form_class = ContactForm
     template_name = "aboutme/contact.html"
+    form_class = ContactForm
     success_url = reverse_lazy("aboutme:thanks")
+
+    def form_valid(self, form):
+        email_content = form.get_email_content()
+        send_mail(
+            'Contact form submission',
+            email_content,
+            'sender@example.com',
+            ['recipient@example.com'],
+            fail_silently=False,
+        )
+        self.request.session['first_name'] = form.cleaned_data.get('first_name', '')
+        return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -106,7 +118,7 @@ class ThanksView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['first_name'] = self.request.session['first_name']
-        context['site_name'] = "Thank you"
+        context['site_name'] = "Contact"
         return context
 
 

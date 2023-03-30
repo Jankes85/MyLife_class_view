@@ -8,6 +8,6 @@ urlpatterns = [
     path('delete/post/<int:id>/', views.post_delete, name='post_delete'),
     path("calendar_current/", views.calendar_current, name="calendar_current"),
     path("calendar_current/<int:year>/<int:month>", views.calendar_change, name="calendar_change"),
-    path("search/", views.blog_post_search, name="post_search"),
+    path("search/", views.BlogPostSearchView.as_view(), name="post_search"),
 
 ]

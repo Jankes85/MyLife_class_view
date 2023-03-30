@@ -31,7 +31,7 @@ padding: 0px">
             </tr>
         </thead>
         <tbody>
-            {% for post in blog %}
+            {% for post in object_list %}
             <tr>
                 <td><a href="{% url 'post_detail' post.id %}">{{ post.title }}</td>
                 <td>{{ post.note }}</td>

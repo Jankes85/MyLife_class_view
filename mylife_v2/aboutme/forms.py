@@ -21,3 +21,8 @@ class ContactForm(forms.Form):
         if not self.cleaned_data['last_name'].isalpha():
             raise ValidationError("Last name must consist of letters only")
         return self.cleaned_data['last_name']
+
+    def get_email_content(self):
+        return f"Sender: {self.cleaned_data['first_name']} {self.cleaned_data['last_name']}\nEmail: " \
+               f"{self.cleaned_data['email']}\nSubject: {self.cleaned_data['subject']}\nMessage:" \
+               f" {self.cleaned_data['message']}"

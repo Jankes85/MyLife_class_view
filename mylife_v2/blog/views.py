@@ -8,22 +8,25 @@ from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, Http404
 from calendar import HTMLCalendar
+
+from django.views.generic import FormView
+
 from .forms import BlogModelForm, BlogPostSearch
 from .models import Blog
 
 
 @login_required
 def post_create(request):
+    ctx = {'form': BlogModelForm(),
+           'site_name': "Add post"}
     if request.method == "POST":
         form = BlogModelForm(request.POST)
         if form.is_valid():
-            pass
             obj = Blog.objects.create(**form.cleaned_data)
             return redirect('post_detail', id=obj.id)
     else:
         form = BlogModelForm()
-        ctx = {'form': form,
-               'site_name': "Add post"}
+
     return render(request=request, template_name='blog/create_post.html', context=ctx)
 
 
@@ -58,27 +61,39 @@ def post_delete(request, id):
     return render(request=request, template_name='blog/post_delete_form.html', context=ctx)
 
 
-def blog_post_search(request):
-    blog = Blog.objects.all()
-    form = BlogPostSearch(request.GET)
-    if form.is_valid():
-        if "search_content" in form.cleaned_data:
-            blog = Blog.objects.filter(Q(title__icontains=form.cleaned_data['search_content']) |
-                                       Q(note__icontains=form.cleaned_data['search_content']))
-        # if "entry_date_from" in form.cleaned_data:
-        #     blog = Blog.objects.filter(entry_date__gte=form.cleaned_data['entry_date_from'])
-        # if "entry_date_to" in form.cleaned_data:
-        #     blog = Blog.objects.filter(entry_date__lte=form.cleaned_data['entry_date_to'])
-        # if "category" in form.cleaned_data:
-        #     blog = Blog.objects.filter(category=form.cleaned_data['category'])
-        # if "author" in form.cleaned_data:
-        #     blog = Blog.objects.filter(author=form.cleaned_data['author'])
+class BlogPostSearchView(FormView):
+    template_name = 'blog/search.html'
+    form_class = BlogPostSearch
 
-    form = BlogPostSearch()
-    ctx = {'blog': blog,
-           'form': form,
-           'site_name': "Search"}
-    return render(request=request, template_name='blog/search.html', context=ctx)
+    def form_valid(self, form):
+        search_content = form.cleaned_data['search_content']
+        entry_date_from = form.cleaned_data['entry_date_from']
+        entry_date_to = form.cleaned_data['entry_date_to']
+        category = form.cleaned_data['category']
+        author = form.cleaned_data['author']
+
+        blog = Blog.objects.all()
+
+        if search_content:
+            blog = blog.filter(Q(title__icontains=search_content) | Q(note__icontains=search_content))
+
+        if entry_date_from:
+            blog = blog.filter(entry_date__gte=entry_date_from)
+
+        if entry_date_to:
+            blog = blog.filter(entry_date__lte=entry_date_to)
+
+        if category:
+            blog = blog.filter(category__exact=category)
+
+        if author:
+            blog = blog.filter(author__exact=author)
+
+        ctx = {'blog': blog,
+               'form': form,
+               'site_name': "Search"}
+
+        return super().form_valid(form)
 
 
 def post_detail(request, id):
