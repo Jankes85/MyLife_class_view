@@ -8,8 +8,10 @@
         {% csrf_token %}
         <input class="next" type="submit" value="Delete" style="border-radius: 0%;">
     </form>
-    <a href="{% url 'post_detail' post.id %}">
-        <button class="next" style="float:right;">Cancel</button></a>
+        {% with cancel_url=view.get_cancel_url %}
+    {% if cancel_url %} <a href="{{ cancel_url }}">
+        <button class="next" style="float:right;">Cancel</button></a> {% endif %}
+    {% endwith %}
 </div>
 <a href="{% static 'aboutme/files/cv.pdf' %}"><button class="button">CV</button></a>
 

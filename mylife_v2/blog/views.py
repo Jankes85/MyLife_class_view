@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.shortcuts import render
 
 # Create your views here.
@@ -9,7 +10,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, Http404
 from calendar import HTMLCalendar
 
-from django.views.generic import FormView
+from django.urls import reverse, reverse_lazy
+from django.views.generic import FormView, DeleteView
 
 from .forms import BlogModelForm, BlogPostSearch
 from .models import Blog
@@ -23,7 +25,7 @@ def post_create(request):
         form = BlogModelForm(request.POST)
         if form.is_valid():
             obj = Blog.objects.create(**form.cleaned_data)
-            return redirect('post_detail', id=obj.id)
+            return redirect('post_detail', pk=obj.pk)
     else:
         form = BlogModelForm()
 
@@ -51,14 +53,14 @@ def post_edit(request, id):
     return render(request=request, template_name='blog/create_post.html', context=ctx)
 
 
-def post_delete(request, id):
-    post = get_object_or_404(Blog, id=id)
-    if request.method == "POST":
-        post.delete()
-        return redirect('calendar_current')
-    ctx = {"post": post,
-           'site_name': "Blog"}
-    return render(request=request, template_name='blog/post_delete_form.html', context=ctx)
+class PostDeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = "blog.delete_blog"
+    model = Blog
+    template_name = "blog/post_delete_form.html"
+    success_url = reverse_lazy("calendar_current")
+
+    def get_cancel_url(self):
+        return reverse("post_detail", args=[self.kwargs["pk"]])
 
 
 class BlogPostSearchView(FormView):

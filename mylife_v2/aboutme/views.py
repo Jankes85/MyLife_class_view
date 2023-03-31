@@ -47,39 +47,10 @@ class ExperienceView(ListView):
         return context
 
 
-def contact(request):
-    if request.method == "POST":
-        form = ContactForm(request.POST)
-        if form.is_valid():
-            subject = form.cleaned_data["subject"]
-            request.session["first_name"] = form.cleaned_data["first_name"]
-            body = {
-                "first_name": form.cleaned_data["first_name"],
-                "last_name": form.cleaned_data["last_name"],
-                "email": form.cleaned_data["email"],
-                "message": form.cleaned_data["message"],
-            }
-            message = "\n".join(body.values())
-
-            try:
-                send_mail(subject, message, 'admin@example.com',
-                          ['admin@example.com'])
-            except BadHeaderError:
-                return HttpResponse('Invalid header found.')
-            return redirect("aboutme:thanks")
-    else:
-        form = ContactForm()
-
-    ctx = {"form": form,
-           'site_name': "Contact",
-           }
-    return render(request=request, template_name="aboutme/contact.html", context=ctx)
-
-
 class ContactView(FormView):
     template_name = "aboutme/contact.html"
     form_class = ContactForm
-    success_url = reverse_lazy("aboutme:thanks")
+    success_url = reverse_lazy("aboutme:thank_you")
 
     def form_valid(self, form):
         email_content = form.get_email_content()
@@ -90,7 +61,7 @@ class ContactView(FormView):
             ['recipient@example.com'],
             fail_silently=False,
         )
-        self.request.session['first_name'] = form.cleaned_data.get('first_name', '')
+        self.request.session['first_name'] = form.cleaned_data.get('first_name')
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
@@ -112,15 +83,14 @@ class SkillsView(ListView):
         return context
 
 
-class ThanksView(TemplateView):
-    template_name = "aboutme/thanks.html"
+class ThankyouView(TemplateView):
+    template_name = "aboutme/thank_you.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['first_name'] = self.request.session['first_name']
         context['site_name'] = "Contact"
         return context
-
 
 
 class PythonView(ListView):

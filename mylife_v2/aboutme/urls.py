@@ -1,5 +1,4 @@
 from django.urls import path
-from django.views.generic import TemplateView
 
 from . import views
 
@@ -17,6 +16,6 @@ urlpatterns = [
     path('skills/css', views.CssView.as_view(), name="css"),
     path('skills/js', views.JsView.as_view(), name="js"),
     path('experience/', views.ExperienceView.as_view(), name="experience"),
-    path('thank-you/', views.ThanksView.as_view(), name="thanks"),
+    path('thank-you/', views.ThankyouView.as_view(), name="thank_you"),
 
 ]

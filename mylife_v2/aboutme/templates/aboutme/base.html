@@ -21,9 +21,9 @@
         {% if user.is_authenticated %}
         Logged: {{ user.username }}
         <br>
-        <a href="{% url 'logout' %}">Logout</a>
+        <a href="{% url 'logout' %}">Log out</a>
         {% else %}
-        <a href="{% url 'login' %}">Login</a> or <a href="{% url 'register' %}">Register</a>
+        <a href="{% url 'login' %}">Log in</a> or <a href="{% url 'register' %}">Register</a>
         {% endif %}
     </div>
     {% endblock %}
