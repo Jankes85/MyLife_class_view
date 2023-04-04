@@ -22,11 +22,11 @@
         </tbody>
 
     </table>
-    <a href="{% url 'post_edit' post.id %}">
+    <a href="{% url 'blog:post_edit' post.pk %}">
         <button class="next" style="display:inline-block;">Edit post</button></a>
-    <a href="{% url 'post_delete' post.id %}">
+    <a href="{% url 'blog:post_delete' post.pk %}">
         <button class="next" style="display:inline-block;">Delete post</button></a>
-    <a href="{% url 'calendar_current' %}">
+    <a href="{% url 'blog:calendar_current' %}">
         <button class="next" style="float:right;">Back</button></a>
 </div>
 <a href="{% static 'aboutme/files/cv.pdf' %}"><button class="button">CV</button></a>

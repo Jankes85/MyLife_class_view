@@ -2,9 +2,9 @@
 
 
 
-<a href="{% url 'calendar_current' %}{{ prev }}">
+<a href="{% url 'blog:calendar_current' %}{{ prev }}">
     <button class="next" style="display:inline-block;">Previous Month</button></a>
-<a href="{% url 'calendar_current' %}{{ next }}">
+<a href="{% url 'blog:calendar_current' %}{{ next }}">
     <button class="next" style="float:right;">Next Month</button></a>
 <div class="cal">
     {{ cal|safe}}
@@ -22,7 +22,7 @@
         <tbody>
             {% for post in blog %}
             <tr>
-                <td><a href="{% url 'post_detail' post.id %}">{{ post.title }}</td>
+                <td><a href="{% url 'blog:post_detail' post.pk %}">{{ post.title }}</td>
                 <td>{{ post.note }}</td>
                 <td>{{ post.entry_date }} </a> </td>
                 <td>{{ post.category }}</td>
@@ -32,9 +32,9 @@
 
     </table>
     <br>
-    <a href="{% url 'post_create' %}">
+    <a href="{% url 'blog:post_create' %}">
         <button class="next" style="display:inline-block;">Add post</button></a>
-    <a href="{% url 'post_search' %}">
+    <a href="{% url 'blog:post_search' %}">
         <button class="next" style="display:inline-block;">Search post</button></a>
     <br>
     <br>

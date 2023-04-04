@@ -1,66 +1,70 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.shortcuts import render
-
-# Create your views here.
 from datetime import datetime, date
-
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, Http404
 from calendar import HTMLCalendar
-
 from django.urls import reverse, reverse_lazy
-from django.views.generic import FormView, DeleteView
-
+from django.views import View
+from django.views.generic import FormView, DeleteView, CreateView, UpdateView, DetailView
 from .forms import BlogModelForm, BlogPostSearch
 from .models import Blog
 
 
-@login_required
-def post_create(request):
-    ctx = {'form': BlogModelForm(),
-           'site_name': "Add post"}
-    if request.method == "POST":
-        form = BlogModelForm(request.POST)
-        if form.is_valid():
-            obj = Blog.objects.create(**form.cleaned_data)
-            return redirect('post_detail', pk=obj.pk)
-    else:
-        form = BlogModelForm()
+class PostCreateView(CreateView):
+    model = Blog
+    form_class = BlogModelForm
+    template_name = "blog/create_post.html"
+    success_url = reverse_lazy('blog:post_detail')
 
-    return render(request=request, template_name='blog/create_post.html', context=ctx)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['site_name'] = "Add post"
+        return context
 
 
-def post_edit(request, id):
-    post = get_object_or_404(Blog, id=id)
-    if request.method == "POST":
-        form = BlogModelForm(request.POST)
-        if form.is_valid():
-            post.title = form.cleaned_data['title']
-            post.note = form.cleaned_data['note']
-            post.entry_date = form.cleaned_data['entry_date']
-            post.category = form.cleaned_data['category']
-            post.author = form.cleaned_data['author']
-            post.save()
-            return redirect('post_detail', id=post.id)
-    else:
-        initial = {'title': post.title, 'note': post.note, 'entry_date': post.entry_date, 'category': post.category,
-                   'author': post.author}
-        form = BlogModelForm(initial=initial)
-        ctx = {'form': form,
-               'site_name': "Edit post"}
-    return render(request=request, template_name='blog/create_post.html', context=ctx)
+class PostDetailView(DetailView):
+    model = Blog
+    template_name = 'blog/post_details.html'
+    context_object_name = 'post'
+
+    def get_object(self, queryset=None):
+        pk = self.kwargs.get('pk')
+        return get_object_or_404(Blog, pk=pk)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['site_name'] = "Post"
+        return context
+
+
+class PostUpdateView(UpdateView):
+    model = Blog
+    form_class = BlogModelForm
+    template_name = 'blog/create_post.html'
+
+    def get_object(self, queryset=None):
+        pk = self.kwargs.get('pk')
+        return get_object_or_404(Blog, pk=pk)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['site_name'] = "Edit post"
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy('blog:post_detail', kwargs={'pk': self.object.pk})
 
 
 class PostDeleteView(PermissionRequiredMixin, DeleteView):
     permission_required = "blog.delete_blog"
     model = Blog
     template_name = "blog/post_delete_form.html"
-    success_url = reverse_lazy("calendar_current")
+    success_url = reverse_lazy("blog:calendar_current")
 
     def get_cancel_url(self):
-        return reverse("post_detail", args=[self.kwargs["pk"]])
+        return reverse("blog:post_detail", args=[self.kwargs["pk"]])
 
 
 class BlogPostSearchView(FormView):
@@ -97,12 +101,6 @@ class BlogPostSearchView(FormView):
 
         return super().form_valid(form)
 
-
-def post_detail(request, id):
-    post = get_object_or_404(Blog, id=id)
-    ctx = {'post': post,
-           'site_name': "Post"}
-    return render(request=request, template_name='blog/post_details.html', context=ctx)
 
 
 def calendar_current(request):
